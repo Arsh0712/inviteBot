@@ -1,20 +1,13 @@
 const { Events } = require('discord.js');
 const db = require('../db');
 const inviteCache = require('../inviteCache');
-const { INVITE_TARGET_CHANNEL_ID } = require('../constants');
 
 async function handleIssueInvite(interaction) {
   await interaction.deferReply({ ephemeral: true });
 
   const guild = interaction.guild;
   const userId = interaction.user.id;
-
-  if (!INVITE_TARGET_CHANNEL_ID) {
-    await interaction.editReply(
-      '招待リンクの発行先チャンネルが設定されていません。管理者に `src/constants.js` の `INVITE_TARGET_CHANNEL_ID` を設定するよう連絡してください。'
-    );
-    return;
-  }
+  const targetChannel = interaction.channel;
 
   // Check for existing owner invite
   const existingCode = await db.getOwnerInvite(guild.id, userId);
@@ -31,14 +24,6 @@ async function handleIssueInvite(interaction) {
       console.error('[interactionCreate] Failed to fetch existing invites:', err.message);
     }
     // The recorded invite no longer exists — fall through to create a new one.
-  }
-
-  const targetChannel = await interaction.client.channels.fetch(INVITE_TARGET_CHANNEL_ID).catch(() => null);
-  if (!targetChannel) {
-    await interaction.editReply(
-      `招待リンク発行先のチャンネル (ID: ${INVITE_TARGET_CHANNEL_ID}) が見つかりません。`
-    );
-    return;
   }
 
   let invite;
