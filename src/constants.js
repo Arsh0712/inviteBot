@@ -6,4 +6,8 @@ module.exports = {
   // /panel コマンドはこのチャンネルでのみ受け付ける（空なら制限しない）
   // 招待リンクもこのチャンネルに向けて発行される
   INVITE_PANEL_CHANNEL_ID: '',
+
+  // /invited-list, /invited-by などの管理系コマンドを実行できるロールの ID 一覧
+  // 空配列の場合は誰でも使える
+  ADMIN_ROLE_IDS: [],
 };

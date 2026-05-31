@@ -1,18 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 const { LOG_CHANNEL_ID } = require('./constants');
 
-function formatJST(date) {
-  return new Intl.DateTimeFormat('ja-JP', {
-    timeZone: 'Asia/Tokyo',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  }).format(date).replace(/\//g, '-') + ' JST';
-}
-
 async function notifyMemberJoin(client, { guild, member, inviter, totalCount }) {
   if (!LOG_CHANNEL_ID) {
     console.warn('[notifier] LOG_CHANNEL_ID is not configured. Skipping channel post.');
@@ -45,8 +33,7 @@ async function notifyMemberJoin(client, { guild, member, inviter, totalCount }) 
         name: '📊 累計招待数',
         value: inviter ? `${totalCount} 人` : '—',
         inline: false,
-      },
-      { name: '🕒 日時', value: formatJST(new Date()), inline: false }
+      }
     );
 
   await channel.send({ embeds: [embed] });

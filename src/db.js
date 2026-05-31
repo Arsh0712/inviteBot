@@ -88,6 +88,26 @@ async function getOwnerInvite(guildId, ownerId) {
   return rows[0]?.invite_code ?? null;
 }
 
+async function getInviteesByInviter(guildId, inviterId) {
+  const [rows] = await pool.query(
+    `SELECT invitee_id, created_at FROM invite_logs
+     WHERE guild_id = ? AND inviter_id = ?
+     ORDER BY created_at DESC`,
+    [guildId, inviterId]
+  );
+  return rows;
+}
+
+async function getInviterOfInvitee(guildId, inviteeId) {
+  const [rows] = await pool.query(
+    `SELECT inviter_id, created_at FROM invite_logs
+     WHERE guild_id = ? AND invitee_id = ?
+     ORDER BY created_at DESC LIMIT 1`,
+    [guildId, inviteeId]
+  );
+  return rows[0] ?? null;
+}
+
 module.exports = {
   pool,
   initSchema,
@@ -97,4 +117,6 @@ module.exports = {
   saveInviteOwner,
   getInviteOwner,
   getOwnerInvite,
+  getInviteesByInviter,
+  getInviterOfInvitee,
 };
